@@ -10,11 +10,8 @@ sudo apt install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
 
-# Install MySQL server
-sudo apt install -y mysql-server
-
-# Set MySQL root password in a non-interactive way
-sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YOUR_PASSWORD_HERE';"
+# Install MySQL client
+sudo apt install -y mysql-client
 
 # Install PHP and required modules
 sudo apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
