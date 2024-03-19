@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: WordPress Infrastructure
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair
+
+Resources:
+  WebServer1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-023adaba598e661ac  # Ubuntu 22 LTS AMI ID
+      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+          Value: wp01
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          git clone ${GitRepo} /tmp/scripts
+          chmod +x /tmp/scripts/script.sh
+          /tmp/scripts/script.sh
+
+  WebServer2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-023adaba598e661ac  # Ubuntu 22 LTS AMI ID
+      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+          Value: wp02
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          git clone ${GitRepo} /tmp/scripts
+          chmod +x /tmp/scripts/script.sh
+          /tmp/scripts/script.sh
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t2.micro
+      Engine: mysql
+      EngineVersion: 8.0
+      DBInstanceIdentifier: db01  # Database named as db01
+      MasterUsername: db_admin  # Database username
+      MasterUserPassword: Random_Password.123  # Database password
+
+  WordPressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access to WordPress instances
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  DatabaseEndpoint:
+    Description: Endpoint of the MySQL database
+    Value: !GetAtt Database.Endpoint.Address
