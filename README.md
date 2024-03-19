@@ -23,7 +23,7 @@ Step 3: Set Up WordPress on Each EC2 Instance
     Download and extract WordPress into the web server directory (usually /var/www/html).
     Configure WordPress by editing the wp-config.php file and set up the database connection details as follows:
 
-php
+
 
 define('DB_NAME', 'your_database_name');
 define('DB_USER', 'your_database_user');
