@@ -1,4 +1,3 @@
-AWSTemplateFormatVersion: '2010-09-09'
 Description: WordPress Infrastructure
 
 Parameters:
@@ -21,8 +20,10 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           git clone https://github.com/b0bby9999/wp_task/blob/main/wordpress.sh /tmp/scripts
-          chmod +x /tmp/scripts/script.sh
-          /tmp/scripts/script.sh
+          chmod +x /tmp/scripts/wordpress.sh
+          sudo /tmp/scripts/wordpress.sh
+      SecurityGroups:
+        - !Ref WordPressSecurityGroup
 
   WebServer2:
     Type: AWS::EC2::Instance
@@ -37,8 +38,10 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           git clone https://github.com/b0bby9999/wp_task/blob/main/wordpress.sh /tmp/scripts
-          chmod +x /tmp/scripts/script.sh
-          /tmp/scripts/script.sh
+          chmod +x /tmp/scripts/wordpress.sh
+          sudo /tmp/scripts/wordpress.sh
+      SecurityGroups:
+        - !Ref WordPressSecurityGroup
 
   Database:
     Type: AWS::RDS::DBInstance
@@ -46,17 +49,34 @@ Resources:
       DBInstanceClass: db.t2.micro
       Engine: mysql
       EngineVersion: 8.0
-      DBInstanceIdentifier: db01  # Database named as db01
-      MasterUsername: db_admin  # Database username
-      MasterUserPassword: Random_Password.123  # Database password
+      DBInstanceIdentifier: db01
+      MasterUsername: db_admin
+      MasterUserPassword: Random_Password.123
+      AllocatedStorage: 20
+      StorageType: gp2
+      MultiAZ: false
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !GetAtt WordPressSecurityGroup.GroupId
 
   WordPressSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Enable HTTP access to WordPress instances
+      GroupDescription: Enable SSH, HTTP, and HTTPS access to WordPress instances
       VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIP  # Allow SSH access only from My IP
+        - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          CidrIp: 0.0.0.0/0  # Allow HTTP traffic from everywhere
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0  # Allow HTTPS traffic from everywhere
+      SecurityGroupEgress:
+        - IpProtocol: -1
           CidrIp: 0.0.0.0/0
