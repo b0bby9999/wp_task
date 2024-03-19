@@ -1,32 +1,45 @@
 #!/bin/bash
 
-# Install necessary packages
+# Update package list
 sudo apt update
-sudo apt install -y apache2 php libapache2-mod-php unzip
 
-# Download WordPress
-wget -P /tmp https://wordpress.org/latest.zip
+# Install Apache
+sudo apt install -y apache2
 
-# Unzip WordPress
-sudo unzip /tmp/latest.zip -d /var/www/html/
+# Start and enable Apache service
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+# Install MySQL server
+sudo apt install -y mysql-server
+
+# Secure MySQL installation (you'll be prompted to set root password)
+sudo mysql_secure_installation
+
+# Install PHP and required modules
+sudo apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
+
+# Restart Apache to apply PHP changes
+sudo systemctl restart apache2
+
+# Download and extract WordPress
+cd /tmp
+wget -c https://wordpress.org/latest.tar.gz
+tar -xzvf latest.tar.gz
+sudo mv wordpress /var/www/html/
 
 # Set permissions
 sudo chown -R www-data:www-data /var/www/html/wordpress
 sudo chmod -R 755 /var/www/html/wordpress
 
-# Create Apache virtual host configuration
-sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/wordpress.conf
-sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/wordpress|g' /etc/apache2/sites-available/wordpress.conf
-sudo sed -i '$a <Directory /var/www/html/wordpress>' /etc/apache2/sites-available/wordpress.conf
-sudo sed -i '$a     AllowOverride All' /etc/apache2/sites-available/wordpress.conf
-sudo sed -i '$a </Directory>' /etc/apache2/sites-available/wordpress.conf
-sudo a2ensite wordpress.conf
-
-# Restart Apache
-sudo systemctl restart apache2
-
-# Configure WordPress to connect to external MySQL database
+# Create a WordPress configuration file
 sudo cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
-sudo sed -i "s|define('DB_NAME', '.*');|define('DB_NAME', 'db01');|g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s|define('DB_USER', '.*');|define('DB_USER', 'db_admin');|g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s|define('DB_PASSWORD', '.*');|define('DB_PASSWORD', 'Random_Password.123');|g" /var/www/html/wordpress/wp-config.php
+sudo sed -i 's/database_name_here/wordpress/g' /var/www/html/wordpress/wp-config.php
+sudo sed -i 's/username_here/root/g' /var/www/html/wordpress/wp-config.php
+sudo sed -i 's/password_here/YOUR_PASSWORD_HERE/g' /var/www/html/wordpress/wp-config.php
+
+# Inform user to replace YOUR_PASSWORD_HERE with the actual MySQL root password
+
+echo "WordPress installation completed."
+echo "Please navigate to your server's IP address/domain name to complete the installation."
+
