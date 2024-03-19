@@ -18,11 +18,12 @@ Step 2: Launch an RDS MySQL Instance
 
 Step 3: Set Up WordPress on Each EC2 Instance
 
-    SSH into each EC2 instance using the key pair you specified during instance creation.
-    Install Apache, MySQL, PHP, and other required dependencies for WordPress.
-    Download and extract WordPress into the web server directory (usually /var/www/html).
-    Configure WordPress by editing the wp-config.php file and set up the database connection details as follows:
+SSH into each EC2 instance using the key pair you specified during instance creation.
 
+    sudo git clone https://github.com/b0bby9999/wp_task.git  # Clone the repository
+    cd wp_task  # Enter the repository directory
+    sudo git checkout main -- wordpress.sh  # Checkout the wordpress.sh file from the main branch
+    sudo sh wordpress.sh -y
 
 
 define('DB_NAME', 'your_database_name');
