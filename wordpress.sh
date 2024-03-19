@@ -13,8 +13,8 @@ sudo systemctl enable apache2
 # Install MySQL server
 sudo apt install -y mysql-server
 
-# Secure MySQL installation (you'll be prompted to set root password)
-sudo mysql_secure_installation
+# Set MySQL root password in a non-interactive way
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YOUR_PASSWORD_HERE';"
 
 # Install PHP and required modules
 sudo apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
@@ -42,4 +42,3 @@ sudo sed -i 's/password_here/YOUR_PASSWORD_HERE/g' /var/www/html/wordpress/wp-co
 
 echo "WordPress installation completed."
 echo "Please navigate to your server's IP address/domain name to complete the installation."
-
