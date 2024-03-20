@@ -10,14 +10,8 @@ sudo apt install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
 
-# Install MySQL client
-sudo apt install -y mysql-client
-
-# Install PHP and required modules
-sudo apt install -y php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip
-
-# Restart Apache to apply PHP changes
-sudo systemctl restart apache2
+# Install other tools
+sudo apt install -y gzip wget
 
 # Download and extract WordPress
 cd /tmp
@@ -35,7 +29,6 @@ sudo sed -i 's/database_name_here/wordpress/g' /var/www/html/wordpress/wp-config
 sudo sed -i 's/username_here/root/g' /var/www/html/wordpress/wp-config.php
 sudo sed -i 's/password_here/YOUR_PASSWORD_HERE/g' /var/www/html/wordpress/wp-config.php
 
-# Inform user to replace YOUR_PASSWORD_HERE with the actual MySQL root password
+# Restart Apache to apply PHP changes
+sudo systemctl restart apache2
 
-echo "WordPress installation completed."
-echo "Please navigate to your server's IP address/domain name to complete the installation."
