@@ -7,7 +7,7 @@ Step 1: Launch EC2 Instances for WordPress
     Create new keypair chosing RSA encrtyption and .pem format
     Create new security group allowing SSH traffic from "My IP", allow HTTP and HTTPS traffic from internet.
     Keep default storage settings
-    On Advanced details upload the user data file - wordpress.sh
+    On Advanced details upload the user data file - wordpress.sh (https://github.com/b0bby9999/wp_task/blob/main/wordpress.sh)
     Chose number of instances - 2 and launch instance.
 
 Step 2: Launch an RDS MySQL Instance
