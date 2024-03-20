@@ -4,7 +4,7 @@
 sudo apt update
 
 # Install Apache
-sudo apt install -y apache2
+sudo apt install -y apache2 php mysql-client php-mysql
 
 # Start and enable Apache service
 sudo systemctl start apache2
